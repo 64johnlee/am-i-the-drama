@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+  <link rel="icon" href="data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'><text%20y='.9em'%20font-size='90'>🎭</text></svg>" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Am I the Drama?</title>
 <style>
@@ -71,7 +72,7 @@
       <button class="opt" id="again">🔁 Play again</button>`;
     document.getElementById('again').onclick=()=>{i=0;score=0;renderQ();};
     document.getElementById('share').onclick=async()=>{
-      const txt=`I'm "${tier}" ${emoji} on the drama scale (${score}/${S.length*3}). Am I the Drama? 🎭`;
+      const txt=`I scored ${score}/${S.length*3} — I'm "${tier}" ${emoji}. Are YOU the drama? 🎭`;
       if(navigator.share){try{await navigator.share({title:'Am I the Drama?',text:txt});return;}catch(e){}}
       try{await navigator.clipboard.writeText(txt);}catch(e){}
       document.getElementById('share').textContent='Copied! 📸 screenshot & post';
