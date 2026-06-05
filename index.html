@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Am I the Drama?</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; padding:0; }
+  html,body { height:100%; }
+  body { font-family:"Trebuchet MS",system-ui,sans-serif; color:#2a1240;
+    background:linear-gradient(160deg,#ffd6f0,#cdeaff 55%,#e8d6ff); min-height:100%;
+    display:flex; align-items:center; justify-content:center; padding:18px; touch-action:manipulation; }
+  .card { width:min(440px,100%); background:rgba(255,255,255,.75); backdrop-filter:blur(6px);
+    border:3px solid #fff; border-radius:22px; padding:22px; text-align:center;
+    box-shadow:0 12px 30px rgba(180,120,220,.35); }
+  h1 { font-size:30px; background:linear-gradient(90deg,#ff5db1,#7a5cff); -webkit-background-clip:text;
+    background-clip:text; color:transparent; margin-bottom:4px; }
+  .meta { font-size:13px; color:#7a6a90; margin-bottom:16px; }
+  .q { font-size:19px; font-weight:bold; margin:10px 0 16px; min-height:54px; }
+  .opt { display:block; width:100%; font-family:inherit; font-size:16px; font-weight:bold;
+    padding:14px; margin:8px 0; border:none; border-radius:14px; cursor:pointer; color:#2a1240;
+    background:linear-gradient(90deg,#ffe0f3,#e0ecff); box-shadow:0 3px 0 #d9b8e8; }
+  .opt:active { transform:translateY(2px); box-shadow:0 1px 0 #d9b8e8; }
+  .big { font-size:64px; margin:6px 0; }
+  .tier { font-size:26px; font-weight:900; margin:4px 0; }
+  .roast { font-size:15px; color:#5a4670; margin:10px 0 18px; }
+  .go { background:linear-gradient(90deg,#ff5db1,#7a5cff); color:#fff; box-shadow:0 4px 0 #6a3aa0; }
+  .bar { height:8px; background:#fff; border-radius:6px; overflow:hidden; margin-bottom:14px; }
+  .barfill { height:100%; width:0%; background:linear-gradient(90deg,#ff5db1,#7a5cff); transition:width .3s; }
+</style>
+</head>
+<body>
+  <div class="card" id="card"></div>
+<script>
+(() => {
+  const S=[
+    {q:"Friend leaves you on read for 6 hrs… then posts a story.",
+      o:[["Eh, they're busy 😌",1],["Leave 'em on read back 😤",2],["Screenshot → the group chat 🔫",3]]},
+    {q:"Someone eats the last slice you were saving.",
+      o:[["I'll just get more 🥲",1],["Passive-aggressive sticky note 📝",2],["Declare war 💣",3]]},
+    {q:"Your ex liked your photo from 2019.",
+      o:[["Ignore it 🧘",1],["Like one of theirs back 👀",2],["Full investigation + meeting 🕵️",3]]},
+    {q:"Group project: one person did nothing.",
+      o:[["Let it slide 🫶",1],["Subtweet about 'teamwork' 🐦",2],["Name them in the presentation 🎤",3]]},
+    {q:"Bestie wore the outfit you posted first.",
+      o:[["Twinning! 💕",1],["Cold for a week ❄️",2],["Unfollow + cryptic story 📲",3]]},
+  ];
+  const card=document.getElementById('card');
+  let i=0, score=0;
+  function tierFor(s){
+    if(s<=7) return ["🫧","Innocent Bean","You're basically a golden retriever in human form."];
+    if(s<=10) return ["😼","Mild Menace","A little spicy, mostly harmless."];
+    if(s<=13) return ["🎭","Certified Drama","You ARE the group chat plot."];
+    return ["💅","The Whole Plot","Reality-TV producers are calling. Repeatedly."];
+  }
+  function renderQ(){
+    const s=S[i];
+    card.innerHTML=`<h1>Am I the Drama?</h1><div class="meta">Question ${i+1} of ${S.length}</div>
+      <div class="bar"><div class="barfill" style="width:${(i/S.length)*100}%"></div></div>
+      <div class="q">${s.q}</div>`+
+      s.o.map((o)=>`<button class="opt" data-p="${o[1]}">${o[0]}</button>`).join('');
+    card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{ score+=+b.dataset.p; i++;
+      (i<S.length)?renderQ():renderResult(); });
+  }
+  function renderResult(){
+    const [emoji,tier,roast]=tierFor(score);
+    card.innerHTML=`<h1>The Verdict</h1><div class="big">${emoji}</div>
+      <div class="tier">${tier}</div><div class="roast">${roast}</div>
+      <div class="meta">Drama score: ${score} / ${S.length*3}</div>
+      <button class="opt go" id="share">📲 Share my result</button>
+      <button class="opt" id="again">🔁 Play again</button>`;
+    document.getElementById('again').onclick=()=>{i=0;score=0;renderQ();};
+    document.getElementById('share').onclick=async()=>{
+      const txt=`I'm "${tier}" ${emoji} on the drama scale (${score}/${S.length*3}). Am I the Drama? 🎭`;
+      if(navigator.share){try{await navigator.share({title:'Am I the Drama?',text:txt});return;}catch(e){}}
+      try{await navigator.clipboard.writeText(txt);}catch(e){}
+      document.getElementById('share').textContent='Copied! 📸 screenshot & post';
+    };
+  }
+  renderQ();
+})();
+</script>
+</body>
+</html>
